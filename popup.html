@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS Jobs → Sheffield Digital</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <span class="logo">CS Jobs → Sheffield Digital</span>
+    </header>
+
+    <div id="state-loading" class="state-panel">Extracting job data…</div>
+
+    <div id="state-not-job" class="state-panel hidden">
+      <p>Open a Civil Service Jobs listing page, then click this extension.</p>
+    </div>
+
+    <div id="state-error" class="state-panel state-error hidden">
+      <p id="error-message"></p>
+    </div>
+
+    <main id="content" class="hidden">
+      <div class="job-header">
+        <div class="job-header-text">
+          <h1 id="display-title"></h1>
+          <span id="display-org"></span>
+        </div>
+      </div>
+
+      <div class="fields">
+
+        <div class="field-group">
+          <label for="f-title">Job Title <span class="req">required</span></label>
+          <div class="field-row">
+            <input id="f-title" type="text" readonly>
+            <button class="btn-copy" data-target="f-title">Copy</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="f-company">Company name <span class="req">required</span></label>
+          <div class="field-row">
+            <input id="f-company" type="text" readonly>
+            <button class="btn-copy" data-target="f-company">Copy</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="f-location">Location</label>
+          <div class="field-row">
+            <input id="f-location" type="text" readonly>
+            <button class="btn-copy" data-target="f-location">Copy</button>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label for="f-jobtype">Job type <span class="req">required</span></label>
+            <div class="field-row">
+              <input id="f-jobtype" type="text" readonly>
+              <button class="btn-copy" data-target="f-jobtype">Copy</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Remote position</label>
+            <div class="field-row">
+              <span id="f-remote" class="remote-badge"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="f-salary">Salary</label>
+          <div class="field-row">
+            <input id="f-salary" type="text" readonly>
+            <button class="btn-copy" data-target="f-salary">Copy</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="f-url">Application URL <span class="req">required</span></label>
+          <div class="field-row">
+            <input id="f-url" type="text" readonly>
+            <button class="btn-copy" data-target="f-url">Copy</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="meta-bar">
+        <span>Closing: <strong id="display-closing"></strong></span>
+        <span>Grade: <strong id="display-grade"></strong></span>
+        <span>Ref: <strong id="display-ref"></strong></span>
+      </div>
+
+      <div class="desc-section">
+        <div class="desc-header">
+          <label>Description <span class="req">required — paste HTML into form</span></label>
+          <div class="desc-actions">
+            <button id="btn-toggle-preview" class="btn-secondary">Preview</button>
+            <button id="btn-copy-desc" class="btn-copy">Copy HTML</button>
+          </div>
+        </div>
+        <textarea id="f-description" readonly spellcheck="false"></textarea>
+        <div id="desc-preview" class="desc-preview hidden"></div>
+      </div>
+
+      <div class="post-section">
+        <button id="btn-post" class="btn-post">Post to Sheffield Digital</button>
+        <div id="post-status" class="post-status hidden"></div>
+      </div>
+    </main>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
