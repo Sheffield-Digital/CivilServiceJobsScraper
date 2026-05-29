@@ -13,6 +13,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 async function postJob({ endpoint, authHeader, payload }) {
   const r = await fetch(endpoint, {
     method: 'POST',
+    credentials: 'omit', // prevent WordPress login cookies triggering cookie-based auth instead of Basic auth
     headers: {
       'Content-Type': 'application/json',
       'Authorization': authHeader,
