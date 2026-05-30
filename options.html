@@ -128,6 +128,22 @@
 
     .btn-save:hover { background: #163260; }
 
+    .btn-test {
+      height: 38px;
+      padding: 0 20px;
+      background: #fff;
+      color: #1c3d6e;
+      border: 1.5px solid #1c3d6e;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .btn-test:hover { background: #f0f4fa; }
+    .btn-test:disabled { opacity: 0.6; cursor: default; }
+
     #save-status {
       font-size: 13px;
       font-weight: 500;
@@ -174,6 +190,7 @@
 
     <div class="actions">
       <button class="btn-save" id="btn-save">Save settings</button>
+      <button class="btn-test" id="btn-test" type="button">Test connection</button>
       <span id="save-status"></span>
     </div>
   </div>

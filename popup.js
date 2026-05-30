@@ -55,12 +55,17 @@ function extractCSJobData() {
     }
   }
 
-  // Extract city names from the full location string (e.g. "Sheffield, Yorkshire : Manchester, North West")
-  var locationCities = location
-    .split(' : ')
-    .map(function(loc) { return loc.split(',')[0].trim(); })
-    .filter(Boolean)
-    .join(', ');
+  // Extract city names from the full location string.
+  // Two formats seen in the wild:
+  //   "City, Region : City, Region"  → extract the city part before each comma
+  //   "City, City, City, …"          → use as-is (already a flat city list)
+  var locationCities = location.includes(' : ')
+    ? location
+        .split(' : ')
+        .map(function(loc) { return loc.split(',')[0].trim(); })
+        .filter(Boolean)
+        .join(', ')
+    : location;
 
   // ── About the job: Job summary, Job description, Person specification ──
   var contentFields = {};
@@ -203,7 +208,7 @@ function populateUI(data) {
   // Sheffield Digital form fields
   setField('f-title', data.title);
   setField('f-company', data.organisation);
-  setField('f-location', data.location);
+  setField('f-location', sheffieldLocation(data.location));
   setField('f-jobtype', data.jobType);
   setField('f-salary', data.salary);
   setField('f-url', data.applicationURL);
@@ -213,62 +218,19 @@ function populateUI(data) {
   document.getElementById('display-grade').textContent = data.grade || '—';
   document.getElementById('display-ref').textContent = data.referenceNumber || '—';
 
-  // Remote badge
-  const remoteEl = document.getElementById('f-remote');
-  if (data.isRemote) {
-    remoteEl.textContent = '✓ Tick "Remote Position"';
-    remoteEl.className = 'remote-badge remote-yes';
-  } else {
-    remoteEl.textContent = '✗ Not remote';
-    remoteEl.className = 'remote-badge remote-no';
-  }
+  // Remote checkbox
+  document.getElementById('f-remote').checked = data.isRemote;
 
-  // Description
-  document.getElementById('f-description').value = data.descriptionHTML;
+  // Description — populate textarea and render preview (preview shown by default)
+  const descTextarea = document.getElementById('f-description');
+  const descPreview  = document.getElementById('desc-preview');
+  descTextarea.value   = data.descriptionHTML;
+  descPreview.innerHTML = data.descriptionHTML;
 }
 
 function setField(id, value) {
   const el = document.getElementById(id);
   if (el) el.value = value || '';
-}
-
-// ── Copy button handler ──
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('.btn-copy');
-  if (!btn) return;
-
-  let text = '';
-  if (btn.id === 'btn-copy-desc') {
-    text = document.getElementById('f-description').value;
-  } else {
-    const targetId = btn.dataset.target;
-    const el = document.getElementById(targetId);
-    text = el ? el.value : '';
-  }
-
-  await copyToClipboard(btn, text);
-});
-
-async function copyToClipboard(btn, text) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    // Fallback for contexts where clipboard API is restricted
-    const tmp = document.createElement('textarea');
-    tmp.value = text;
-    tmp.style.cssText = 'position:fixed;top:-9999px;left:-9999px';
-    document.body.appendChild(tmp);
-    tmp.select();
-    document.execCommand('copy');
-    document.body.removeChild(tmp);
-  }
-  const orig = btn.textContent;
-  btn.textContent = '✓ Copied';
-  btn.classList.add('copied');
-  setTimeout(() => {
-    btn.textContent = orig;
-    btn.classList.remove('copied');
-  }, 1500);
 }
 
 // ── Preview toggle ──
@@ -360,24 +322,24 @@ document.getElementById('btn-post')?.addEventListener('click', async () => {
 // ── Build the JSON payload for the Sheffield Digital API ──
 
 function buildJobPayload(data) {
+  const descHTML = document.getElementById('f-description').value;
   return {
     job_ref:         data.referenceNumber.substring(0, 20),
-    job_title:       data.title.substring(0, 200),
-    job_description: htmlToMarkdown(data.descriptionHTML).substring(0, 40000),
-    job_type:        data.jobType.toLowerCase(),
-    job_location:    sheffieldLocation(data.location),
-    job_remote:      data.isRemote ? 'true' : 'false',
+    job_title:       document.getElementById('f-title').value.trim().substring(0, 200),
+    job_description: htmlToMarkdown(descHTML).substring(0, 40000),
+    job_type:        document.getElementById('f-jobtype').value.trim().toLowerCase(),
+    job_location:    document.getElementById('f-location').value.trim(),
+    job_remote:      document.getElementById('f-remote').checked ? 'true' : 'false',
     job_expires:     parseISODate(data.closingDate),
-    job_application: data.applicationURL,
-    job_salary:      data.salary.replace(/\s+/g, ' ').trim().substring(0, 40),
+    job_application: document.getElementById('f-url').value.trim(),
+    job_salary:      document.getElementById('f-salary').value.trim().replace(/\s+/g, ' ').substring(0, 40),
   };
 }
 
-// Extract "Sheffield" if present, otherwise first city truncated to 20 chars.
+// Return "Sheffield" if any location contains Sheffield, otherwise return the full list.
 function sheffieldLocation(locationCities) {
-  const cities = locationCities.split(', ');
-  if (cities.some(c => /sheffield/i.test(c))) return 'Sheffield';
-  return (cities[0] || locationCities).substring(0, 20);
+  if (/sheffield/i.test(locationCities)) return 'Sheffield';
+  return locationCities;
 }
 
 // Parse "11:55 pm on Sunday 31st May 2026" → "2026-05-31"

@@ -34,59 +34,42 @@
 
         <div class="field-group">
           <label for="f-title">Job Title <span class="req">required</span></label>
-          <div class="field-row">
-            <input id="f-title" type="text" readonly>
-            <button class="btn-copy" data-target="f-title">Copy</button>
-          </div>
+          <input id="f-title" type="text">
         </div>
 
         <div class="field-group">
           <label for="f-company">Company name <span class="req">required</span></label>
-          <div class="field-row">
-            <input id="f-company" type="text" readonly>
-            <button class="btn-copy" data-target="f-company">Copy</button>
-          </div>
+          <input id="f-company" type="text">
         </div>
 
         <div class="field-group">
           <label for="f-location">Location</label>
-          <div class="field-row">
-            <input id="f-location" type="text" readonly>
-            <button class="btn-copy" data-target="f-location">Copy</button>
-          </div>
+          <input id="f-location" type="text">
         </div>
 
         <div class="two-col">
           <div class="field-group">
             <label for="f-jobtype">Job type <span class="req">required</span></label>
-            <div class="field-row">
-              <input id="f-jobtype" type="text" readonly>
-              <button class="btn-copy" data-target="f-jobtype">Copy</button>
-            </div>
+            <input id="f-jobtype" type="text">
           </div>
 
           <div class="field-group">
-            <label>Remote position</label>
-            <div class="field-row">
-              <span id="f-remote" class="remote-badge"></span>
-            </div>
+            <label for="f-remote">Remote position</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="f-remote">
+              <span>Remote</span>
+            </label>
           </div>
         </div>
 
         <div class="field-group">
           <label for="f-salary">Salary</label>
-          <div class="field-row">
-            <input id="f-salary" type="text" readonly>
-            <button class="btn-copy" data-target="f-salary">Copy</button>
-          </div>
+          <input id="f-salary" type="text">
         </div>
 
         <div class="field-group">
           <label for="f-url">Application URL <span class="req">required</span></label>
-          <div class="field-row">
-            <input id="f-url" type="text" readonly>
-            <button class="btn-copy" data-target="f-url">Copy</button>
-          </div>
+          <input id="f-url" type="text">
         </div>
 
       </div>
@@ -99,14 +82,13 @@
 
       <div class="desc-section">
         <div class="desc-header">
-          <label>Description <span class="req">required — paste HTML into form</span></label>
+          <label>Description <span class="req">required</span></label>
           <div class="desc-actions">
-            <button id="btn-toggle-preview" class="btn-secondary">Preview</button>
-            <button id="btn-copy-desc" class="btn-copy">Copy HTML</button>
+            <button id="btn-toggle-preview" class="btn-secondary active">HTML</button>
           </div>
         </div>
-        <textarea id="f-description" readonly spellcheck="false"></textarea>
-        <div id="desc-preview" class="desc-preview hidden"></div>
+        <textarea id="f-description" spellcheck="false" class="hidden"></textarea>
+        <div id="desc-preview" class="desc-preview"></div>
       </div>
 
       <div class="post-section">

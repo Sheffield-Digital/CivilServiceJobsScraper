@@ -4,6 +4,7 @@ const elEndpoint = document.getElementById('endpoint');
 const elUsername = document.getElementById('username');
 const elPassword = document.getElementById('password');
 const elSave     = document.getElementById('btn-save');
+const elTest     = document.getElementById('btn-test');
 const elStatus   = document.getElementById('save-status');
 const elShowPass = document.getElementById('btn-show-pass');
 
@@ -32,6 +33,49 @@ elSave.addEventListener('click', () => {
       showStatus('Settings saved.', true);
     }
   });
+});
+
+// Test connection
+elTest.addEventListener('click', async () => {
+  const endpoint = elEndpoint.value.trim() || DEFAULT_ENDPOINT;
+  const username = elUsername.value.trim();
+  const password = elPassword.value;
+
+  if (!username || !password) {
+    showStatus('Please enter both username and password.', false);
+    return;
+  }
+
+  elTest.disabled = true;
+  elTest.textContent = 'Testing…';
+  showStatus('', true);
+
+  try {
+    const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader,
+      },
+      // Intentionally missing required fields so the API rejects the payload
+      // but still authenticates — a 400/422 means auth succeeded.
+      body: JSON.stringify({ _test: true }),
+    });
+
+    if (r.status === 401 || r.status === 403) {
+      showStatus('Authentication failed — check your username and API key.', false);
+    } else {
+      // Any other response (400, 422, 200…) means the server accepted the credentials.
+      showStatus('Connection successful — credentials are valid.', true);
+    }
+  } catch (err) {
+    showStatus('Connection error: ' + err.message, false);
+  } finally {
+    elTest.disabled = false;
+    elTest.textContent = 'Test connection';
+  }
 });
 
 // Show/hide password toggle
